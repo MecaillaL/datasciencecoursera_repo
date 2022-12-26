@@ -1,0 +1,32 @@
+* Machine learning is the process whereby computers learn to make decisions from data without being explicitly programmed.
+* Unsupervised learning is the process of uncovering hidden patterns and structures from unlabeled data. 
+* Supervised learning is a type of machine learning where the values to be predicted are 
+  already known, and a model is built with the aim of accurately predicting values of previously unseen data. 
+  Supervised learning uses features to predict the value of a target variable, such as predicting a basketball player's position based on their points per game.
+
+
+TYPES OF SUPERVISED:
+1. CLASSIFICATION
+2. REGRESSION
+
+###########################
+
+from sklearn.module import Model
+Model = Model()
+model.fit(X,y)
+model.predict(X_new)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
