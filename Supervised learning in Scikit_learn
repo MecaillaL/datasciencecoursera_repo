@@ -102,6 +102,284 @@ plt.ylabel("Accuracy")
 plt.show()
 
 
+________________________________________________________________________________________________________________________
+------------------------------ Introduction to regression ------------------------------------------
+
+** Creating features **
+
+###############################################
+import numpy as np
+
+# Create X from the radio column's values
+X = sales_df["radio"].values
+
+# Create y from the sales column's values
+y = sales_df["sales"].values
+
+# Reshape X
+X = X.reshape(-1, 1)
+
+# Check the shape of the features and targets
+print(X.shape, y.shape)
+
+
+################################################
+-------Building a linear regression model--------
+
+# Import LinearRegression
+from sklearn.linear_model import LinearRegression
+
+# Create the model
+reg = LinearRegression()
+
+# Fit the model to the data
+reg.fit(X,y)
+
+# Make predictions
+predictions = reg.predict(X)
+
+print(predictions[:5])
+
+########################################################
+----------- Visualizing a linear regression model--------
+
+# Import matplotlib.pyplot
+import matplotlib.pyplot as plt
+
+# Create scatter plot
+plt.scatter(X, y, color="blue")
+
+# Create line plot
+plt.plot(X, predictions, color="red")
+plt.xlabel("Radio Expenditure ($)")
+plt.ylabel("Sales ($)")
+
+# Display the plot
+plt.show()
+
+
+#######################################################
+-------------- The basics of linear regression ----------------
+
+Fit and predict for regression
+
+# Create X and y arrays
+X = sales_df.drop("sales", axis=1).values               <<--#instructions:#Create X, an array containing values of all features in sales_df, and y, containing all values from the "sales" column
+y = sales_df["sales"].values
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Instantiate the model
+reg = LinearRegression()
+
+# Fit the model to the data
+reg.fit(X_train, y_train)
+
+# Make predictions
+y_pred = reg.predict(X_test)
+print("Predictions: {}, Actual Values: {}".format(y_pred[:2], y_test[:2]))
+
+
+#############################################################
+---------- Regression performance -------------------------------
+
+# Import mean_squared_error
+from sklearn.metrics import mean_squared_error
+
+# Compute R-squared
+r_squared = reg.score(X_test, y_test)
+
+# Compute RMSE
+rmse = mean_squared_error(y_test, y_pred, squared=False)
+
+# Print the metrics
+print("R^2: {}".format(r_squared))
+print("RMSE: {}".format(rmse))
+
+##result:
+ <script.py> output:
+    R^2: 0.9990165886162027
+    RMSE: 2942.372219812037
+
+
+#########################################################
+--------- Cross-validation for R-squared ------------------
+
+=>> Cross-validation is a vital approach to evaluating a model. 
+It maximizes the amount of data that is available to the model, 
+as the model is not only trained but also tested on all of the 
+available data. <<=
+
+
+# Import the necessary modules
+from sklearn.model_selection import cross_val_score, KFold
+
+# Create a KFold object
+kf = KFold(n_splits=6, shuffle=True, random_state=5)
+
+reg = LinearRegression()
+
+# Compute 6-fold cross-validation scores
+cv_scores = cross_val_score(reg, X, y, cv=kf)
+
+# Print scores
+print(cv_scores)
+
+#results:
+ <script.py> output:
+    [0.74451678 0.77241887 0.76842114 0.7410406  0.75170022 0.74406484]
+
+########### ------------- Analyzing cross-validation metrics ------#######
+
+# Print the mean
+print(np.mean(cv_results))
+
+# Print the standard deviation
+print(np.std(cv_results))
+
+# Print the 95% confidence interval
+print(np.quantile(cv_results, [0.025, 0.975]))
+
+#result:
+ <script.py> output:
+    0.7536937416666666
+    0.012305386274436092
+    [0.74141863 0.77191915]
+   // An average score of 0.75 with a low standard deviation is pretty good for a model out of the box!//
+   
+   
+##############################################################
+------------- Regularized regression ---------------------------
+
+=>> regularization in regression, a technique used to avoid overfitting.
+Regularization: Penalized large coefficients
+
+types:
+1. RIDGE REGRESSION = Ordinary Least Squares loss function +
+                      the squared value of each coefficient, multiplied by a constant, alpha.
+
+   alpha = parameter that we need to choose #for which alpha the best model perform
+   Hyperparameter = variables used to optimized model parameters.
+   
+
+2. LASSO REGRESSION = the OLS loss function +
+                      the absolute value of each coefficient multiplied by some constant, alpha.
+       => can select important features of a dataset
+       => shrinks the coefficients of less important features to zero.
+       => features not shrinks to zero are selected by lasso
+       
+       
+##############################################
+--------- Regularized regression: Ridge ------
+
+# Import Ridge
+from sklearn.linear_model import Ridge
+alphas = [0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0]
+ridge_scores = []
+for alpha in alphas:
+  
+  # Create a Ridge regression model
+  ridge = Ridge(alpha=alpha)
+  
+  # Fit the data
+  ridge.fit(X_train, y_train)
+  
+  # Obtain R-squared
+  score = ridge.score(X_test, y_test)
+  ridge_scores.append(score)
+print(ridge_scores)
+
+#results:
+ <script.py> output:
+    [0.9990152104759369, 0.9990152104759373, 0.9990152104759419, 0.9990152104759871, 0.9990152104764387, 0.9990152104809561]
+   // The scores don't appear to change much as alpha increases, 
+      which is indicative of how well the features explain the variance 
+      in the target—even by heavily penalizing large coefficients, 
+      underfitting does not occur! //
+    
+ ################################################################
+ ------------- Lasso regression for feature importance ----------
+
+# Import Lasso
+from sklearn.linear_model import Lasso
+
+# Instantiate a lasso regression model
+lasso = Lasso(alpha= 0.3)
+# Fit the model to the data
+lasso.fit(X, y)
+
+# Compute and print the coefficients
+lasso_coef = lasso.fit(X, y).coef_
+print(lasso_coef)
+plt.bar(sales_columns, lasso_coef)
+plt.xticks(rotation=45)
+plt.show()
+
+#results:
+ <script.py> output:
+    [ 3.56256962 -0.00397035  0.00496385]   //it clear that expenditure on TV advertising is the most important feature in the dataset to predict sales values!//
+    
+    
+_____________________________________________________________________________________________________________________________________
+------------------------------ FINE-TUNING YOUR MODEL ------------------------------------
+--------------------  HOW GOOD IS YOUR MDOEL? ----------------------------------
+
+** CLASSIFICATION METRICS
+
+CLASS IMBALANCE => The situation where one class is more frequent is called class imbalance.
+
+*Confusion Matrix for assesing classification performance
+   = Accuracy > TP + TN / TP+TN+FP+FN
+   = Precisiom > TP / TP+FP
+   = Sensitivity/Recall > TP/ TP+FN
+   = F1 score > 2* [(PRECISION*RECALL) / (PRECISION + RECALL)]
+
+
+###################################################
+----- Assessing a diabetes prediction classifier
+
+  # Import confusion matrix
+from sklearn.metrics import classification_report, confusion_matrix
+
+knn = KNeighborsClassifier(n_neighbors=6)
+
+# Fit the model to the training data
+knn.fit(X_train, y_train)
+
+# Predict the labels of the test data: y_pred
+y_pred = knn.predict(X_test)
+
+# Generate the confusion matrix and classification report
+print(confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))  
+    
+
+####################################################################
+--------------- Logistic regression and the ROC curve ----------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
