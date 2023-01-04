@@ -170,11 +170,42 @@ ________________________________________________________________________________
 =>> a technique called “back propagation” to calculate the slopes you need to optimize more complex deep learning models.
 => Just as forward propagation sends input data through the hidden layers and into the output layer, back propagation takes 
     the error from the output layer andpropagates it backward through the hidden layers, towards the input layer.    
+PROCESS:
+=> Go back one layer at a time
+=> Gradients for weights is product of;
+    1. Node value feeding into that weight
+    2. Slope of loss function w.r.t node it feed into.
+    3. Slope of activation function at the node it feeds into
     
+
+ ###########################################
+ ------- CREATING A KERAS MODEL ------------
+ 1. Specify architecture
+ 2. Compile
+ 3. Fit the model
+ 4. USe model for predictions
+ 
+ 
+----------------------------  Specifying a model    ---------------------------
     
-    
-    
-    
+    # Import necessary modules
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Sequential
+
+# Save the number of columns in predictors: n_cols
+n_cols = predictors.shape[1]
+
+# Set up the model: model
+model = Sequential()
+
+# Add the first layer
+model.add(Dense(50, activation='relu', input_shape=(n_cols,)))
+
+# Add the second layer
+model.add(Dense(32, activation='relu'))
+
+# Add the output layer
+model.add(Dense(1))
     
     
     
