@@ -1,0 +1,406 @@
+WHAT IS VECTORIZATION?
+
+#####################################################
+# PYTHON
+
+import numpy as np
+
+a= np.array([1,2,3,4})
+
+
+import time #to check the time it takes
+
+a = np.random.rand(1000000)
+b= np.random.rand(1000000)
+
+tic = time.time()
+
+c= np.dot(a, b)
+
+toc = time.time()
+
+print("vectorized version:" + str(1000 * (toc-tic)) + "ms")
+
+##result:
+  vectorized version: 1.47....ms
+  
+#######################################################################################
+
+COURSERA PYTHON ASSIGNMENT:
+
+
+  ### One reason why we use "numpy" instead of "math" in Deep Learning ###
+
+x = [1, 2, 3] # x becomes a python list object
+basic_sigmoid(x) # you will see this give an error when you run it, because x is a vector.
+  
+ _______________________
+ 
+ import numpy as np
+
+# example of np.exp
+t_x = np.array([1, 2, 3])
+print(np.exp(t_x)) # result is (exp(1), exp(2), exp(3))
+
+#result:
+   [ 2.71828183  7.3890561  20.08553692]
+  
+  
+  _________________________
+  
+  ##USING MATH.EXP
+  import math
+from public_tests import *
+
+# GRADED FUNCTION: basic_sigmoid
+
+def basic_sigmoid(x):
+    """
+    Compute sigmoid of x.
+
+    Arguments:
+    x -- A scalar
+
+    Return:
+    s -- sigmoid(x)
+    """
+    # (≈ 1 line of code)
+    # s = 
+    # YOUR CODE STARTS HERE
+    s= 1/(1+ math.exp(-x))
+    
+    # YOUR CODE ENDS HERE
+    
+    return s
+  
+  print("basic_sigmoid(1) = " + str(basic_sigmoid(1)))
+
+basic_sigmoid_test(basic_sigmoid)
+ ##result:
+    basic_sigmoid(1) = 0.7310585786300049
+  
+___________________________________________  
+
+##USING NUMPY
+
+# GRADED FUNCTION: sigmoid
+
+def sigmoid(x):
+    """
+    Compute the sigmoid of x
+
+    Arguments:
+    x -- A scalar or numpy array of any size
+
+    Return:
+    s -- sigmoid(x)
+    """
+    
+    # (≈ 1 line of code)
+    # s = 
+    # YOUR CODE STARTS HERE
+    s = 1 / (1+ np.exp(-x))
+    
+    # YOUR CODE ENDS HERE
+    
+    return s
+
+t_x = np.array([1, 2, 3])
+print("sigmoid(t_x) = " + str(sigmoid(t_x)))
+
+sigmoid_test(sigmoid)
+##REsult:
+    sigmoid(t_x) = [0.73105858 0.88079708 0.95257413]
+   
+________________________________________________________________
+
+Implement the function sigmoid_grad() to compute the gradient of the sigmoid function with respect to its input x. The formula is:
+
+𝑠𝑖𝑔𝑚𝑜𝑖𝑑_𝑑𝑒𝑟𝑖𝑣𝑎𝑡𝑖𝑣𝑒(𝑥)=𝜎′(𝑥)=𝜎(𝑥)(1−𝜎(𝑥))(2)
+You often code this function in two steps:
+
+Set s to be the sigmoid of x. You might find your sigmoid(x) function useful.
+Compute  𝜎′(𝑥)=𝑠(1−𝑠)
+
+_______________________________________________
+
+def image2vector(image):
+    """
+    Argument:
+    image -- a numpy array of shape (length, height, depth)
+    
+    Returns:
+    v -- a vector of shape (length*height*depth, 1)
+    """
+    
+    # (≈ 1 line of code)
+    # v =
+    # YOUR CODE STARTS HERE
+    v = image.reshape((image.shape[0] * image.shape[1] * image.shape[2]), 1)
+    
+    # YOUR CODE ENDS HERE
+    
+    return v
+____________________________________________________________________________________________
+
+NORMALIZED
+
+Normalizing rows
+Another common technique we use in Machine Learning and Deep Learning is to normalize our data. 
+It often leads to a better performance because gradient descent converges faster after normalization. 
+Here, by normalization we mean changing x to  𝑥/‖𝑥‖
+  (dividing each row vector of x by its norm).
+
+def normalize_rows(x):
+    """
+    Implement a function that normalizes each row of the matrix x (to have unit length).
+    
+    Argument:
+    x -- A numpy matrix of shape (n, m)
+    
+    Returns:
+    x -- The normalized (by row) numpy matrix. You are allowed to modify x.
+    """
+    
+    #(≈ 2 lines of code)
+    # Compute x_norm as the norm 2 of x. Use np.linalg.norm(..., ord = 2, axis = ..., keepdims = True)
+    # x_norm =
+    # Divide x by its norm.
+    # x =
+    # YOUR CODE STARTS HERE
+    x_norm = np.linalg.norm(x, ord=2,  axis=1, keepdims=True) #With keepdims=True the result will broadcast correctly against the original x.
+                                                              #axis=1 means you are going to get the norm in a row-wise manner
+    x = x/ x_norm
+    # YOUR CODE ENDS HERE
+
+    return x
+
+x = np.array([[0, 3, 4],
+              [1, 6, 4]])
+print("normalizeRows(x) = " + str(normalize_rows(x)))
+
+normalizeRows_test(normalize_rows)
+
+#result: 
+    normalizeRows(x) = [[0.         0.6        0.8       ]
+ [0.13736056 0.82416338 0.54944226]]
+    
+___________________________________________________________________________________________________
+
+SOFTMAX
+
+def softmax(x):
+    """Calculates the softmax for each row of the input x.
+
+    Your code should work for a row vector and also for matrices of shape (m,n).
+
+    Argument:
+    x -- A numpy matrix of shape (m,n)
+
+    Returns:
+    s -- A numpy matrix equal to the softmax of x, of shape (m,n)
+    """
+    
+    #(≈ 3 lines of code)
+    # Apply exp() element-wise to x. Use np.exp(...).
+    # x_exp = ...
+
+    # Create a vector x_sum that sums each row of x_exp. Use np.sum(..., axis = 1, keepdims = True).
+    # x_sum = ...
+    
+    # Compute softmax(x) by dividing x_exp by x_sum. It should automatically use numpy broadcasting.
+    # s = ...
+    
+    # YOUR CODE STARTS HERE
+    x_exp = np.exp(x)
+    x_sum= np.sum(x_exp, axis =1, keepdims = True)
+    s = x_exp / x_sum
+    # YOUR CODE ENDS HERE
+    
+    return s
+
+t_x = np.array([[9, 2, 5, 0, 0],
+                [7, 5, 0, 0 ,0]])
+print("softmax(x) = " + str(softmax(t_x)))
+
+softmax_test(softmax)
+##result:
+    softmax(x) = [[9.80897665e-01 8.94462891e-04 1.79657674e-02 1.21052389e-04
+  1.21052389e-04]
+    
+ ___________________________________________________________________________________
+ 
+ VECTORIZATION;
+ 
+ import time
+
+x1 = [9, 2, 5, 0, 0, 7, 5, 0, 0, 0, 9, 2, 5, 0, 0]
+x2 = [9, 2, 2, 9, 0, 9, 2, 5, 0, 0, 9, 2, 5, 0, 0]
+
+### CLASSIC DOT PRODUCT OF VECTORS IMPLEMENTATION ###
+tic = time.process_time()
+dot = 0
+
+for i in range(len(x1)):
+    dot += x1[i] * x2[i]
+toc = time.process_time()
+print ("dot = " + str(dot) + "\n ----- Computation time = " + str(1000 * (toc - tic)) + "ms")
+
+### CLASSIC OUTER PRODUCT IMPLEMENTATION ###
+tic = time.process_time()
+outer = np.zeros((len(x1), len(x2))) # we create a len(x1)*len(x2) matrix with only zeros
+
+for i in range(len(x1)):
+    for j in range(len(x2)):
+        outer[i,j] = x1[i] * x2[j]
+toc = time.process_time()
+print ("outer = " + str(outer) + "\n ----- Computation time = " + str(1000 * (toc - tic)) + "ms")
+
+### CLASSIC ELEMENTWISE IMPLEMENTATION ###
+tic = time.process_time()
+mul = np.zeros(len(x1))
+
+for i in range(len(x1)):
+    mul[i] = x1[i] * x2[i]
+toc = time.process_time()
+print ("elementwise multiplication = " + str(mul) + "\n ----- Computation time = " + str(1000 * (toc - tic)) + "ms")
+
+
+////####result: ******************
+dot = 278
+ ----- Computation time = 0.09810799999998565ms
+outer = [[81. 18. 18. 81.  0. 81. 18. 45.  0.  0. 81. 18. 45.  0.  0.]
+ [18.  4.  4. 18.  0. 18.  4. 10.  0.  0. 18.  4. 10.  0.  0.]
+ [45. 10. 10. 45.  0. 45. 10. 25.  0.  0. 45. 10. 25.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [63. 14. 14. 63.  0. 63. 14. 35.  0.  0. 63. 14. 35.  0.  0.]
+ [45. 10. 10. 45.  0. 45. 10. 25.  0.  0. 45. 10. 25.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [81. 18. 18. 81.  0. 81. 18. 45.  0.  0. 81. 18. 45.  0.  0.]
+ [18.  4.  4. 18.  0. 18.  4. 10.  0.  0. 18.  4. 10.  0.  0.]
+ [45. 10. 10. 45.  0. 45. 10. 25.  0.  0. 45. 10. 25.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.]]
+ ----- Computation time = 0.1917010000000996ms
+elementwise multiplication = [81.  4. 10.  0.  0. 63. 10.  0.  0.  0. 81.  4. 25.  0.  0.]
+ ----- Computation time = 0.10958499999991211ms
+gdot = [27.85995475 15.2003279  23.33068359]
+ ----- Computation time = 0.17080199999996992ms
+
+########################################################################################################3
+
+### CLASSIC GENERAL DOT PRODUCT IMPLEMENTATION ###
+W = np.random.rand(3,len(x1)) # Random 3*len(x1) numpy array
+tic = time.process_time()
+gdot = np.zeros(W.shape[0])
+
+for i in range(W.shape[0]):
+    for j in range(len(x1)):
+        gdot[i] += W[i,j] * x1[j]
+toc = time.process_time()
+print ("gdot = " + str(gdot) + "\n ----- Computation time = " + str(1000 * (toc - tic)) + "ms")   
+    
+x1 = [9, 2, 5, 0, 0, 7, 5, 0, 0, 0, 9, 2, 5, 0, 0]
+x2 = [9, 2, 2, 9, 0, 9, 2, 5, 0, 0, 9, 2, 5, 0, 0]
+
+### VECTORIZED DOT PRODUCT OF VECTORS ###
+tic = time.process_time()
+dot = np.dot(x1,x2)
+toc = time.process_time()
+print ("dot = " + str(dot) + "\n ----- Computation time = " + str(1000 * (toc - tic)) + "ms")
+
+### VECTORIZED OUTER PRODUCT ###
+tic = time.process_time()
+outer = np.outer(x1,x2)
+toc = time.process_time()
+print ("outer = " + str(outer) + "\n ----- Computation time = " + str(1000 * (toc - tic)) + "ms")
+
+### VECTORIZED ELEMENTWISE MULTIPLICATION ###
+tic = time.process_time()
+mul = np.multiply(x1,x2)
+toc = time.process_time()
+print ("elementwise multiplication = " + str(mul) + "\n ----- Computation time = " + str(1000*(toc - tic)) + "ms")
+
+### VECTORIZED GENERAL DOT PRODUCT ###
+tic = time.process_time()
+dot = np.dot(W,x1)
+toc = time.process_time()
+print ("gdot = " + str(dot) + "\n ----- Computation time = " + str(1000 * (toc - tic)) + "ms")    
+    
+ //////##########result: *******************
+
+dot = 278
+ ----- Computation time = 0.338482999999945ms
+outer = [[81 18 18 81  0 81 18 45  0  0 81 18 45  0  0]
+ [18  4  4 18  0 18  4 10  0  0 18  4 10  0  0]
+ [45 10 10 45  0 45 10 25  0  0 45 10 25  0  0]
+ [ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
+ [63 14 14 63  0 63 14 35  0  0 63 14 35  0  0]
+ [45 10 10 45  0 45 10 25  0  0 45 10 25  0  0]
+ [ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
+ [81 18 18 81  0 81 18 45  0  0 81 18 45  0  0]
+ [18  4  4 18  0 18  4 10  0  0 18  4 10  0  0]
+ [45 10 10 45  0 45 10 25  0  0 45 10 25  0  0]
+ [ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0]]
+ ----- Computation time = 0.1558749999999165ms
+elementwise multiplication = [81  4 10  0  0 63 10  0  0  0 81  4 25  0  0]
+ ----- Computation time = 0.14376399999993517ms
+gdot = [27.85995475 15.2003279  23.33068359]
+ ----- Computation time = 1.1723930000000493ms
+    
+    
+______________________________________________________________________________________________
+
+LOSS FUNCTION
+=> The loss is used to evaluate the performance of your model. The bigger your loss is, the more different your predictions ( 𝑦̂ 
+ ) are from the true values ( 𝑦
+ ). In deep learning, you use optimization algorithms like Gradient Descent to train your model and to minimize the cost.
+
+# GRADED FUNCTION: L1
+
+def L1(yhat, y):
+    """
+    Arguments:
+    yhat -- vector of size m (predicted labels)
+    y -- vector of size m (true labels)
+    
+    Returns:
+    loss -- the value of the L1 loss function defined above
+    """
+    
+    #(≈ 1 line of code)
+    # loss = 
+    # YOUR CODE STARTS HERE
+    
+    loss= np.sum(abs(y - yhat))
+    # YOUR CODE ENDS HERE
+    
+    return loss
+    
+  yhat = np.array([.9, 0.2, 0.1, .4, .9])
+y = np.array([1, 0, 0, 1, 1])
+print("L1 = " + str(L1(yhat, y)))
+
+L1_test(L1)
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
